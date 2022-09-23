@@ -1,13 +1,12 @@
 clc;clear all;close all;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Reading data from file %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-sprintf('IS THE INPUT FILE datamean PRESENT IN THE FOLDER')
-sprintf('ARE I,J VALUES WHILE WRITING DATA CORRECTED ACCORDING TO MESH SIZE')
+
 
 zones=input('\n Enter the number of zones: ');
 rows=input('\n Enter the number of rows: ');
 columns=input('\n Enter the number of columns: ');
-data=load('UV_clean.dat');                                %Enter the filename containing Instataneous velocity%
+data=load('Recon3_20zones.dat');                                %Enter the filename containing Instataneous velocity%
 a=data(:,1);                                              %The first column contains u velocity%
 b=data(:,2);                                              %The second column contains v velocity%  
 
@@ -60,7 +59,7 @@ end
 loc_x=50;
 loc_y=[5 10 20 30 40 50 60 70 80 90];
 loc_y=flip(loc_y);
-
+loc_y1=flip(loc_y);
 for kk=1:length(loc_y)
 
 tempu_1=reshape(u(loc_y(kk),loc_x,:),[length(u(loc_y(kk),loc_x,:)),1]);
@@ -109,9 +108,9 @@ for i=1:100
     tempv_2=reshape(u(i,j,:),[length(u(i,j,:)),1]);
     c_tempvu=corrcoef(tempv_1,tempv_2);
     c_vu(i,j)=c_tempvu(1,2);
-%     if(c_vu(i,j)<0.3)
-%         c_vu(i,j)=0;
-%     end
+%      if(abs(c_vu(i,j))<0.1)
+%          c_vu(i,j)=0;
+%      end
     end
 end
 
@@ -125,12 +124,24 @@ mymap=[254 255 177
     220 22 29
     177 0 38];
 mymap=mymap/255;
+mymap2=[126 5 2
+    208 47 5
+    251 125 33
+    238 207 58
+    165 252 59
+    50 242 151
+    40 189 234
+    71 111 231
+    48 15 59];
+mymap2=mymap2/255;
 xx=linspace(min(x),max(x),50);yy=ones(1,50);
 
 figure(1)
 subplot(length(loc_y)/2,2,kk); 
 contourf(X,Y,c_uu,[0 0.3 0.6 0.9 1.0]);ylabel('y/\delta');set(gca,'FontSize',5);hold on;
 plot(xx,yy,'--k');title(num2str(kk))
+plot(x(50),y(loc_y1(kk)),'-ow','linewidth',1,'MarkerFaceColor','w')
+plot(x(50),y(loc_y1(kk)),'-+k','linewidth',1.5); hold on;
 colormap(mymap)
 
 figure(2)
@@ -138,20 +149,26 @@ subplot(length(loc_y)/2,2,kk)
 contourf(X,Y,c_vv,[0 0.3 0.6 0.9 1.0]);ylabel('y/\delta');set(gca,'FontSize',5);hold on;
 plot(xx,yy,'--k');title(num2str(kk))
 set(gca,'Xticklabel',[]);
+plot(x(50),y(loc_y1(kk)),'-ow','linewidth',1,'MarkerFaceColor','w')
+plot(x(50),y(loc_y1(kk)),'-+k','linewidth',1.5); hold on;
 colormap(mymap)
 
 figure(3)
 subplot(length(loc_y)/2,2,kk); 
-contourf(X,Y,c_uv);ylabel('y/\delta');set(gca,'FontSize',5);hold on;
+contourf(X,Y,c_uv,[0.4 0.3 0.2 0.1 0 -0.1 -0.2 -0.3 -0.4], 'LineStyle','none');ylabel('y/\delta');set(gca,'FontSize',5);hold on;
 plot(xx,yy,'--k');title(num2str(kk))
-% colormap(mymap)
+plot(x(50),y(loc_y1(kk)),'-ow','linewidth',1,'MarkerFaceColor','w')
+plot(x(50),y(loc_y1(kk)),'-+k','linewidth',1.5); hold on;
+colormap(flipud(mymap2))
 
 figure(4)
 subplot(length(loc_y)/2,2,kk)
-contourf(X,Y,c_vu);ylabel('y/\delta');set(gca,'FontSize',5);hold on;
-plot(xx,yy,'--k');title(num2str(kk))
+contourf(X,Y,c_vu,[0.4 0.3 0.2 0.1 0 -0.1 -0.2 -0.3 -0.4,'ShowText','on'], 'LineStyle','none');ylabel('y/\delta');set(gca,'FontSize',5);hold on;
+plot(xx,yy,'--k');title(num2str(kk)); 
+plot(x(50),y(loc_y1(kk)),'-ow','linewidth',1,'MarkerFaceColor','w')
+plot(x(50),y(loc_y1(kk)),'-+k','linewidth',1.5); hold on;
 set(gca,'Xticklabel',[]);
-% colormap(mymap)
+colormap(flipud(mymap2))
 
 end
 

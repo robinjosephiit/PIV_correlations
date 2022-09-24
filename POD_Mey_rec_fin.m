@@ -3,9 +3,9 @@
 clc;clear all;close all;
 
 zones   = input('\n Enter the number of zones: ');
-rows    = input('\n Enter the number of rows: ');
-columns = input('\n Enter the number of columns: ');
-data=load('UV_clean.dat'); 
+rows    = 100;
+columns = 100;
+data=load('X125_clean.dat'); 
                                    
 a=data(:,1);                                              %instantaneous fluctuation, u' velocity%
 b=data(:,2);                                              %instantaneous fluctuation, v' velocity%
@@ -21,8 +21,20 @@ for k=1:zones                                             %i------->x position, 
         m=m+1;
     end
 end
+
+for i=1:rows*columns 
+    umean(i)=mean(u(i,:));
+    vmean(i)=mean(v(i,:));
+end
+umean=transpose(umean);vmean=transpose(vmean);
+
+for i=1:zones
+    uflc(:,i)=u(:,i)-umean(:);
+    vflc(:,i)=v(:,i)-vmean(:);
+end
+
 clear a; clear b; clear m;
-Uall=[u;v];                                             % Creating matrix will all fluctuating velocity components for each snapshot in a column
+Uall=[uflc;vflc];                                             % Creating matrix will all fluctuating velocity components for each snapshot in a column
 clear u; clear v;
 %Active variables are Uall, rows, columns, zones.
 
@@ -99,7 +111,7 @@ fid=fopen('Coefficients.dat','w');
 fprintf(fid,'TITLE     = "2C PIV DATASET" \n');
 fprintf(fid,'VARIABLES = "C" \n');
 fprintf(fid,'ZONE T="Coefficients" \n');                    
-fprintf(fid,'I=996, J=996, K=1, ZONETYPE=Ordered \n');            %I,J has to modified according to number of zones.
+fprintf(fid,'I=971, J=971, K=1, ZONETYPE=Ordered \n');            %I,J has to modified according to number of zones.
 fprintf(fid,'DATAPACKING=POINT \n');
 fprintf(fid,'DT=(SINGLE) \n');
 for j=1:zones
@@ -125,7 +137,7 @@ if (program == 1)
     fprintf(fid,'"C_KE_t" \n');
     fprintf(fid,'"Mode num" \n');
     fprintf(fid,'ZONE T="Kinetic energy fraction" \n');                    
-    fprintf(fid,'I=1, J=996, K=1, ZONETYPE=Ordered \n');            %J has to modified according to number of zones.
+    fprintf(fid,'I=1, J=971, K=1, ZONETYPE=Ordered \n');            %J has to modified according to number of zones.
     fprintf(fid,'DATAPACKING=POINT \n');
     fprintf(fid,'DT=(SINGLE SINGLE SINGLE) \n');
     for i=1:zones
@@ -152,7 +164,7 @@ if (program == 2)
     fprintf(fid,'"C_KE_t" \n');
     fprintf(fid,'"Mode num" \n');
     fprintf(fid,'ZONE T="Kinetic energy fraction" \n');                    
-    fprintf(fid,'I=1, J=996, K=1, ZONETYPE=Ordered \n');            %J has to modified according to number of zones.
+    fprintf(fid,'I=1, J=971, K=1, ZONETYPE=Ordered \n');            %J has to modified according to number of zones.
     fprintf(fid,'DATAPACKING=POINT \n');
     fprintf(fid,'DT=(SINGLE SINGLE SINGLE) \n');
     for i=1:zones
